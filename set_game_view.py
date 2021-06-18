@@ -15,12 +15,16 @@ class SetGameView:
         self.highscore = ''
         highscore_file = open(BASE+'highscore.txt')
         
-        
+        #gets the text for the high score and gets the actual amount of seconds
+        #of the high score
         if len(line:=highscore_file.readline())!=0:
-            self.highscore = line
+            m,s = int(float(line.split(':')[0])), float(line.split(':')[1])
+            self.highscore = m * 60 + s
+            word = 'minute' if m == 1 else 'minutes'
+            self.highscore_text = f'{m} {word} and {s} seconds'
             
         self._root_window = tkinter.Tk()
-        self._root_window.title(f'Set Game - Highscore: {round(float(self.highscore),2)}')
+        self._root_window.title(f'Set Game - Highscore: {self.highscore_text}')
         self.start = time.time()
         game = GameState()
         game.create_board()
@@ -130,18 +134,21 @@ class SetGameView:
             self._game_over(time = time.time() - self.start)
 
     def _game_over(self, time):
-        self._label['text'] = f'You took {round(time, 2)} seconds to complete this puzzle'
+        #converts time to minutes and seconds 
+        m, s = divmod(round(time,2), 60)
+        m_word = 'minute' if m == 1 else 'minutes'
+        self._label['text'] = f'You took {int(m)} {m_word} and {s} seconds to complete this puzzle'
         if self.highscore == '':
-           self._set_high(time)
+           self._set_high(m,s)
         #only rewrites the highest score if the new time is better
         elif time < float(self.highscore) :
-            self._set_high(time)
+            self._set_high(m,s)
         
         self._create_reset_button()
 
-    def _set_high(self, time):
+    def _set_high(self, m,s):
         file = open(BASE+'highscore.txt','w')
-        file.write(str(time))
+        file.write(f'{m}:{s}')
         
 
     def _create_reset_button(self):
@@ -154,9 +161,14 @@ class SetGameView:
                                 text = 'Play Again!', font = 'menlo', command = reset)
 
         self._reset_button = button
-        self._reset_button.grid(row = 4, column = 2,padx = 10,
-                         pady = 10,sticky = tkinter.E  )
+        self._reset_button.grid(row = 4, column = 3,padx = 10,
+                         pady = 10,sticky = tkinter.W  )
+        self._disable_buttons()
         
+    def _disable_buttons(self):
+        for button in self.buttons:
+            button['state'] = 'disable'
+            
     def run(self) -> None:
         self._root_window.mainloop()
                
