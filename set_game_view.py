@@ -5,9 +5,13 @@ from tkinter import PhotoImage
 import time
 BASE = 'assets/'
 EXT = '.png'
+
 class SetGameView:
 
     def __init__(self):
+        #set title to the highest score
+        #if there is one in the file in the
+        #assets folder
         self.highscore = ''
         highscore_file = open(BASE+'highscore.txt')
         
@@ -129,6 +133,7 @@ class SetGameView:
         self._label['text'] = f'You took {round(time, 2)} seconds to complete this puzzle'
         if self.highscore == '':
            self._set_high(time)
+        #only rewrites the highest score if the new time is better
         elif time < float(self.highscore) :
             self._set_high(time)
         
