@@ -100,7 +100,7 @@ class SetGameView:
                         
                         self._update_score()
                         word = 'set' if self.score == 1 else 'sets'
-                        if self.score != 1:
+                        if self.score != 6:
                             self._label['text'] = f'Great! {self.score} {word} found!'
                         self.sets.remove(check_set)
                         self.found.append(check_set)
@@ -126,7 +126,7 @@ class SetGameView:
     def _update_score(self):
         self.score += 1
         self._score_label['text'] = f'Count: {self.score}'
-        if self.score == 1:
+        if self.score == 6:
             self._game_over(time = time.time() - self.start)
 
     def _game_over(self, time):
